@@ -34,6 +34,7 @@ int SCREEN_WIDTH, SCREEN_HEIGHT;
 void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
+void Animation();
 
 
 // Camera
@@ -45,6 +46,10 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
+// Drone variables
+bool Animdrone = false;
+float rotdrone = 0.0f;
+float ydronemovement = 0.0f;
 
 
 int main( )
@@ -104,6 +109,7 @@ int main( )
     Model tree((char*)"Models/edificio/edi.obj");
     Model piso((char*)"Models/carro/esce2.obj");
     Model edif((char*)"Models/estadio/estadio2.obj");
+    Model drone((char*)"Models/drone/drone3.obj");
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
 
 
@@ -179,6 +185,12 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         edif.Draw(shader);
 
+        model = glm::mat4(1.0f); 
+        model = glm::translate(model, glm::vec3(3.0f, 0.3f, 0.0f)); 
+        model = glm::scale(model, glm::vec3(0.01f)); 
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        drone.Draw(shader);
+
        
 
         // Swap the buffers
@@ -237,9 +249,25 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
         }
     }
 
- 
+    if (keys[GLFW_KEY_N])
+    {
+        Animdrone = !Animdrone;
+    }
+}
 
- 
+void Animation() {
+    if (Animdrone) {
+        static float direction = 0.001f;
+        ydronemovement += direction;
+
+        if (ydronemovement >= 0.5f) {
+            direction = -0.001f;
+        }
+
+        if (ydronemovement <= -0.5f) {
+            direction = 0.001f;
+        }
+    }
 }
 
 void MouseCallback( GLFWwindow *window, double xPos, double yPos )
