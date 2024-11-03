@@ -1,9 +1,6 @@
-//Laboratorio de Computacion Grafica Grupo 1
-//Alumno: Gabriel Ortiz Uriel   315346989
-//semestre 2025-1
-//Carga de modelos
-
-// Std. Includes
+#define M_PI 3.14159265358979323846
+#include <iostream>
+#include <cmath>
 #include <string>
 
 // GLEW
@@ -46,7 +43,7 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-// Drone variables
+// Drone animation
 bool Animdrone = false;
 float rotdrone = 0.0f;
 float ydronemovement = 0.0f;
@@ -109,7 +106,7 @@ int main( )
     Model tree((char*)"Models/edificio/edi.obj");
     Model piso((char*)"Models/carro/esce2.obj");
     Model edif((char*)"Models/estadio/estadio2.obj");
-    Model drone((char*)"Models/drone/drone3.obj");
+    Model drone((char*)"Models/drone/drone1.obj");
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
 
 
@@ -188,6 +185,8 @@ int main( )
         model = glm::mat4(1.0f); 
         model = glm::translate(model, glm::vec3(3.0f, 0.3f, 0.0f)); 
         model = glm::scale(model, glm::vec3(0.01f)); 
+        model = glm::translate(model, glm::vec3(0.0f, ydronemovement, 0.0f));
+        model = glm::rotate(model, glm::radians(rotdrone), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         drone.Draw(shader);
 
@@ -258,6 +257,7 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
 void Animation() {
     if (Animdrone) {
         static float direction = 0.001f;
+        rotdrone += 0.01;
         ydronemovement += direction;
 
         if (ydronemovement >= 0.5f) {
